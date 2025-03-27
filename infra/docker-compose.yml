@@ -11,7 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "user", "-d", "aks-teste-dois"]
       interval: 30s
@@ -60,11 +60,10 @@ services:
       QUARKUS_DATASOURCE_PASSWORD: password
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092  
     ports:
-      - "8080:8080"
+      - "8081:8080"  
     volumes:
-      - ./backend:/app
+      - ../backend:/app
     command: ["java", "-jar", "/app/target/quarkus-app-runner.jar"]
-
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
