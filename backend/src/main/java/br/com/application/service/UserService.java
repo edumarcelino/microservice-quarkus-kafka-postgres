@@ -61,22 +61,29 @@ public class UserService {
         try {
             validateEmail(userRequestDTO.getEmail());
             validatePassword(userRequestDTO.getPassword());
-
+    
             User user = UserMapper.toEntity(userRequestDTO);
             userRepository.persist(user);
-
+    
+            // Log de sucesso na criação do usuário
             logService.logInfo("Usuário criado com sucesso: " + user.id, OperationType.CREATE_USER);
-
-            // Dispara evento para ser processado após commit e informando que é uma
-            // inserção
+    
+            // Dispara evento após o commit
             userOperationEventDTO.fire(new UserOperationDTO("CREATE", user));
-
+    
             return UserMapper.toResponseDTO(user);
+        } catch (WeakPasswordException e) {
+            // Log de erro com a exceção
+            logService.logError("Erro ao criar usuário: Senha fraca", e, OperationType.CREATE_USER);
+            throw e; // Re-lança a exceção para ser tratada posteriormente
         } catch (Exception e) {
+            // Log de erro genérico
             logService.logError("Erro ao criar usuário", e, OperationType.CREATE_USER);
-            throw e;
+            throw e; // Re-lança a exceção
         }
     }
+    
+    
 
     @Transactional
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
