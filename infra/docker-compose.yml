@@ -54,16 +54,21 @@ services:
     depends_on:
       - postgres
       - kafka
+      - keycloak
     environment:
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/aks-teste-dois
       QUARKUS_DATASOURCE_USERNAME: user
       QUARKUS_DATASOURCE_PASSWORD: password
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092  
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8080/realms/master
+      QUARKUS_OIDC_CLIENT_ID: quarkus-app
+      QUARKUS_OIDC_CREDENTIALS_SECRET: secret
     ports:
-      - "8081:8080"  
+      - "8081:8080"
     volumes:
       - ../backend:/app
     command: ["java", "-jar", "/app/target/quarkus-app-runner.jar"]
+
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
@@ -73,6 +78,24 @@ services:
       KAFKA_BROKERCONNECT: kafka:9092
     depends_on:
       - kafka
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: ["start-dev"]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 
 volumes:
   postgres_data:
