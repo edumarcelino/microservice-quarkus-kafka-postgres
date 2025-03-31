@@ -2,15 +2,13 @@ package br.com.application.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
-import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.event.TransactionPhase;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import br.com.application.messaging.UserProducer;
+import br.com.common.exception.ExceptionLogger;
 import br.com.common.exception.InvalidEmailException;
-import br.com.common.exception.UserNotFoundException;
 import br.com.common.exception.WeakPasswordException;
 import br.com.domain.dto.UserOperationDTO;
 import br.com.domain.dto.UserRequestDTO;
@@ -18,16 +16,13 @@ import br.com.domain.dto.UserResponseDTO;
 import br.com.domain.mapper.UserMapper;
 import br.com.domain.model.User;
 import br.com.domain.repository.UserRepository;
-import br.com.domain.model.enums.OperationType;
 
 @ApplicationScoped
+@ExceptionLogger  // Ativa o interceptor para capturar exceções e registrar logs
 public class UserService {
 
     @Inject
     UserRepository userRepository;
-
-    @Inject
-    LogService logService;
 
     @Inject
     UserProducer userProducer;
@@ -39,105 +34,60 @@ public class UserService {
     private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
 
     public List<UserResponseDTO> getAllUsers() {
-        logService.logInfo("Buscando todos os usuários", OperationType.GET_USER);
         List<User> users = userRepository.listAll();
         return users.stream()
                 .map(UserMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    
     public UserResponseDTO getUserById(Long id) {
-        logService.logInfo("Buscando usuário por ID: " + id, OperationType.GET_USER);
-        User user = userRepository.findById(id);
-        if (user == null) {
-            logService.logWarn("Usuário com ID " + id + " não encontrado", OperationType.GET_USER);
-            throw new UserNotFoundException("User with ID " + id + " not found");
-        }
-        return UserMapper.toResponseDTO(user);
+
+        return userRepository.findByIdOptional(id)
+                .map(UserMapper::toResponseDTO)
+                .orElseThrow(() -> new InvalidEmailException("User with ID " + id + " not found"));
     }
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
-        try {
-            validateEmail(userRequestDTO.getEmail());
-            validatePassword(userRequestDTO.getPassword());
-    
-            User user = UserMapper.toEntity(userRequestDTO);
-            userRepository.persist(user);
-    
-            // Log de sucesso na criação do usuário
-            logService.logInfo("Usuário criado com sucesso: " + user.id, OperationType.CREATE_USER);
-    
-            // Dispara evento após o commit
-            userOperationEventDTO.fire(new UserOperationDTO("CREATE", user));
-    
-            return UserMapper.toResponseDTO(user);
-        } catch (WeakPasswordException e) {
-            // Log de erro com a exceção
-            logService.logError("Erro ao criar usuário: Senha fraca", e, OperationType.CREATE_USER);
-            throw e; // Re-lança a exceção para ser tratada posteriormente
-        } catch (Exception e) {
-            // Log de erro genérico
-            logService.logError("Erro ao criar usuário", e, OperationType.CREATE_USER);
-            throw e; // Re-lança a exceção
-        }
+        validateEmail(userRequestDTO.getEmail());
+        validatePassword(userRequestDTO.getPassword());
+
+        User user = UserMapper.toEntity(userRequestDTO);
+        userRepository.persist(user);
+
+        // Dispara evento após o commit
+        userOperationEventDTO.fire(new UserOperationDTO("CREATE", user));
+
+        return UserMapper.toResponseDTO(user);
     }
-    
-    
 
     @Transactional
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
-        try {
-            logService.logInfo("Atualizando usuário com ID: " + id, OperationType.UPDATE_USER);
-            User existingUser = userRepository.findByIdOptional(id)
-                    .orElseThrow(() -> {
-                        logService.logWarn("Usuário com ID " + id + " não encontrado", OperationType.UPDATE_USER);
-                        return new UserNotFoundException("User with ID " + id + " not found");
-                    });
+        User existingUser = userRepository.findByIdOptional(id)
+                .orElseThrow(() -> new InvalidEmailException("User with ID " + id + " not found"));
 
-            existingUser.setUsername(userRequestDTO.getUsername());
-            existingUser.setEmail(userRequestDTO.getEmail());
-            existingUser.setPassword(userRequestDTO.getPassword());
+        existingUser.setUsername(userRequestDTO.getUsername());
+        existingUser.setEmail(userRequestDTO.getEmail());
+        existingUser.setPassword(userRequestDTO.getPassword());
 
-            userRepository.persist(existingUser);
+        userRepository.persist(existingUser);
 
-            logService.logInfo("Usuário atualizado com sucesso: " + id, OperationType.UPDATE_USER);
+        // Dispara evento para ser processado após commit e informando que é um update
+        userOperationEventDTO.fire(new UserOperationDTO("UPDATE", existingUser));
 
-            // Dispara evento para ser processado após commit e informando que é um update
-            userOperationEventDTO.fire(new UserOperationDTO("UPDATE", existingUser));
-
-            return UserMapper.toResponseDTO(existingUser);
-        } catch (Exception e) {
-            logService.logError("Erro ao atualizar usuário com ID: " + id, e, OperationType.UPDATE_USER);
-            throw e;
-        }
+        return UserMapper.toResponseDTO(existingUser);
     }
 
     @Transactional
     public void deleteUser(Long id) {
-        try {
-            logService.logInfo("Deletando usuário com ID: " + id, OperationType.DELETE_USER);
-            User user = userRepository.findByIdOptional(id)
-                    .orElseThrow(() -> {
-                        logService.logWarn("Usuário com ID " + id + " não encontrado", OperationType.DELETE_USER);
-                        return new UserNotFoundException("User with ID " + id + " not found");
-                    });
+        User user = userRepository.findByIdOptional(id)
+                .orElseThrow(() -> new InvalidEmailException("User with ID " + id + " not found"));
 
-            userRepository.delete(user);
+        userRepository.delete(user);
 
-            logService.logInfo("Usuário deletado com sucesso: " + id, OperationType.DELETE_USER);
-
-            // Dispara evento informando que é uma deleção
-            userOperationEventDTO.fire(new UserOperationDTO("DELETE", user));
-
-        } catch (Exception e) {
-            logService.logError("Erro ao deletar usuário com ID: " + id, e, OperationType.DELETE_USER);
-            throw e;
-        }
-    }
-
-    public void sendUserEvent(@Observes(during = TransactionPhase.AFTER_SUCCESS) UserOperationDTO userEventDTO) {
-        userProducer.sendUserToKafka(userEventDTO);
+        // Dispara evento informando que é uma deleção
+        userOperationEventDTO.fire(new UserOperationDTO("DELETE", user));
     }
 
     private void validateEmail(String email) {

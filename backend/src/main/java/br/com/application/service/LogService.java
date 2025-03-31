@@ -26,9 +26,13 @@ public class LogService {
         log(LogLevel.INFO, message, null, operationType);
     }
 
-    @Transactional
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public void logError(String message, Exception exception, OperationType operationType) {
         log(LogLevel.ERROR, message, exception, operationType);
+        System.out.println(LogLevel.ERROR);
+        System.out.println(message);
+        System.out.println(exception);
+        System.out.println(operationType);
     }
 
     @Transactional
@@ -58,6 +62,8 @@ public class LogService {
         log.logUser = securityContext.getUserPrincipal() != null ? securityContext.getUserPrincipal().getName()
                 : "unknown";
         log.persistAndFlush();
+
+        System.out.println(log);
 
         // Log no console conforme o nível
         switch (level) {

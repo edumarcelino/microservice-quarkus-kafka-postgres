@@ -7,5 +7,7 @@ public enum OperationType {
     GET_USER,
     LOGIN,
     LOGOUT,
-    EVENT_SENT
+    EVENT_SENT, 
+    DATABASE, 
+    GENERAL
 }
