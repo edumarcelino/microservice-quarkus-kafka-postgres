@@ -1,0 +1,111 @@
+{
+    "realm": "gpg",
+    "enabled": true,
+    "roles": {
+        "realm": [
+            {
+                "name": "admin",
+                "description": "Administrator role"
+            },
+            {
+                "name": "user",
+                "description": "User role"
+            },
+            {
+                "name": "review",
+                "description": "Reviewer role"
+            }
+        ]
+    },
+    "groups": [
+        {
+            "name": "Admins"
+        },
+        {
+            "name": "Users"
+        },
+        {
+            "name": "Reviewers"
+        }
+    ],
+    "users": [
+        {
+            "username": "admin_user",
+            "enabled": true,
+            "firstName": "Admin",
+            "lastName": "User",
+            "email": "admin@example.com",
+            "emailVerified": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "adminuserpass",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "admin"
+            ],
+            "groups": [
+                "Admins"
+            ]
+        },
+        {
+            "username": "normal_user",
+            "enabled": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "normaluserpass",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "user"
+            ],
+            "groups": [
+                "Users"
+            ]
+        },
+        {
+            "username": "review_user",
+            "enabled": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "reviewuserpass",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "review"
+            ],
+            "groups": [
+                "Reviewers"
+            ]
+        }
+    ],
+    "clients": [
+        {
+            "clientId": "gpg_client",
+            "enabled": true,
+            "publicClient": false,
+            "secret": "secret",
+            "directAccessGrantsEnabled": true,
+            "serviceAccountsEnabled": true,
+            "standardFlowEnabled": true,
+            "rootUrl": "http://localhost:8081",
+            "redirectUris": [
+                "http://localhost:8081/*"
+            ],
+            "webOrigins": [
+                "+"
+            ],
+            "protocol": "openid-connect",
+            "attributes": {
+                "post.logout.redirect.uris": "+",
+                "oauth2.device.authorization.grant.enabled": "true"
+            }
+        }
+    ]
+}
