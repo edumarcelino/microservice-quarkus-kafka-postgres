@@ -10,8 +10,8 @@ import br.com.application.service.UserService;
 import br.com.common.exception.InvalidEmailException;
 import br.com.common.exception.UserNotFoundException;
 import br.com.common.exception.WeakPasswordException;
-import br.com.domain.dto.UserRequestDTO;
-import br.com.domain.dto.UserResponseDTO;
+import br.com.domain.dto.request.UserRequestDTO;
+import br.com.domain.dto.response.UserResponseDTO;
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)

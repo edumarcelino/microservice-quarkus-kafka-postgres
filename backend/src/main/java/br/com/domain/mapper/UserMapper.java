@@ -1,8 +1,8 @@
 package br.com.domain.mapper;
 
 import br.com.domain.dto.UserOperationDTO;
-import br.com.domain.dto.UserRequestDTO;
-import br.com.domain.dto.UserResponseDTO;
+import br.com.domain.dto.request.UserRequestDTO;
+import br.com.domain.dto.response.UserResponseDTO;
 import br.com.domain.model.User;
 import jakarta.json.JsonObject;
 
