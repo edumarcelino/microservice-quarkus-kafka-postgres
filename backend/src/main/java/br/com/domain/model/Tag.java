@@ -1,10 +1,13 @@
 package br.com.domain.model;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -48,8 +51,7 @@ public class Tag extends PanacheEntity {
         return Objects.hash(id);
     }
 
-    /*
-     * @ManyToMany(mappedBy = "tags")
-     * public Set<Postagem> postagens = new HashSet<>();
-     */
+    @ManyToMany(mappedBy = "tags")
+    public Set<Postagem> postagens = new HashSet<>();
+
 }
