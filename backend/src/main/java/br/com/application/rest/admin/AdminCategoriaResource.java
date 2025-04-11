@@ -1,13 +1,17 @@
 package br.com.application.rest.admin;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 import br.com.application.service.CategoriaService;
 import br.com.domain.dto.request.CategoriaRequestDTO;
 import br.com.domain.dto.response.CategoriaResponseDTO;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -25,9 +29,20 @@ public class AdminCategoriaResource {
     @Inject
     CategoriaService categoriaService;
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("ADMIN") 
+    public Response listarCategorias() {
+        List<CategoriaResponseDTO> categorias = categoriaService.getAllCategorias()
+                .stream()
+                .collect(Collectors.toList());
+        return Response.ok(categorias).build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("ADMIN") 
     public Response create(@Valid CategoriaRequestDTO categoriaRequestDTO) {
         CategoriaResponseDTO responseDTO = categoriaService.create(categoriaRequestDTO);
         return Response.status(Status.CREATED).entity(responseDTO).build();
@@ -35,6 +50,8 @@ public class AdminCategoriaResource {
 
     @PUT
     @Path("/{categoriaId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("ADMIN") 
     public Response editarCategoria(@PathParam("categoriaId") Long categoriaId,
             @Valid CategoriaRequestDTO categoriaRequestDTO) {
         CategoriaResponseDTO categoriaAtualizada = categoriaService.updateCategoria(categoriaId, categoriaRequestDTO);
@@ -43,6 +60,7 @@ public class AdminCategoriaResource {
 
     @DELETE
     @Path("/{categoriaId}")
+    @RolesAllowed("ADMIN") 
     public Response deletarCategoria(@PathParam("categoriaId") Long categoriaId) {
         boolean deleted = categoriaService.deleteCategoria(categoriaId);
 

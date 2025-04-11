@@ -1,4 +1,5 @@
-package br.com.application.messaging;
+/*
+ br.com.application.messaging;
 
 import io.smallrye.reactive.messaging.kafka.Record;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -42,3 +43,5 @@ public class UserProducer {
     }
 
 }
+
+ */

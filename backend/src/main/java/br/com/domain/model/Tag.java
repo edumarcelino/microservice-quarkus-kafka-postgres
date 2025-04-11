@@ -1,17 +1,16 @@
 package br.com.domain.model;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
 @Entity
+@Table(name = "tags")
 public class Tag extends PanacheEntity {
 
     @NotBlank(message = "O nome da tag é obrigatório.")
@@ -19,11 +18,12 @@ public class Tag extends PanacheEntity {
     @Column(unique = true, nullable = false, length = 30)
     public String nome;
 
-    // Construtor padrão
+    @ManyToMany(mappedBy = "tags")
+    public Set<Postagem> postagens = new HashSet<>();
+
     public Tag() {
     }
 
-    // Construtor com parâmetros
     public Tag(String nome) {
         this.nome = nome;
     }
@@ -38,10 +38,8 @@ public class Tag extends PanacheEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
         return Objects.equals(id, tag.id);
     }
@@ -50,8 +48,4 @@ public class Tag extends PanacheEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    @ManyToMany(mappedBy = "tags")
-    public Set<Postagem> postagens = new HashSet<>();
-
 }

@@ -17,7 +17,7 @@ public class SecuredResource {
     @GET
     @Path("/admin")
     @Produces(MediaType.TEXT_PLAIN)
-    @RolesAllowed("admin") // Apenas usuários com a role "admin"
+    @RolesAllowed("ADMIN") // Apenas usuários com a role "admin"
     public String adminOnly() {
         return "Bem-vindo, " + jwt.getName() + "! Você é um administrador." + jwt.getExpirationTime() + " - "
                 + jwt.getIssuedAtTime();
@@ -26,7 +26,7 @@ public class SecuredResource {
     @GET
     @Path("/user")
     @Produces(MediaType.TEXT_PLAIN)
-    @RolesAllowed({ "admin", "user" }) // Admins e Users podem acessar
+    @RolesAllowed({ "ADMIN", "USER" }) // Admins e Users podem acessar
     public String userAccess() {
         return "Olá, " + jwt.getName() + "! Você tem acesso como usuário.";
     }

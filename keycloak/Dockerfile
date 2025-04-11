@@ -23,7 +23,7 @@ FROM quay.io/keycloak/keycloak:latest
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 # Configuração do banco de dados será definida no docker-compose.yml
-ENV KC_HOSTNAME=localhost
+#ENV KC_HOSTNAME=keycloak
 
 # Entrada padrão do container
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]

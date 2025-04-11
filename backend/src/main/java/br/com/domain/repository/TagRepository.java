@@ -19,8 +19,10 @@ public class TagRepository implements PanacheRepository<Tag> {
     }
 
     public boolean deleteTag(Long id) {
-        // Retorna true se a tag foi removida com sucesso
         return deleteById(id);
     }
 
+    public List<Tag> findByIds(List<Long> ids) {
+        return find("id in ?1", ids).stream().collect(java.util.stream.Collectors.toList());
+    }
 }

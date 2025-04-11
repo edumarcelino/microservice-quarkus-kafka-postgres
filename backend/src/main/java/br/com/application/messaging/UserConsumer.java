@@ -1,4 +1,5 @@
-package br.com.application.messaging;
+/*
+ br.com.application.messaging;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import io.smallrye.reactive.messaging.kafka.Record;
@@ -49,3 +50,5 @@ public class UserConsumer {
 
     }
 }
+
+ */

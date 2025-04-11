@@ -6,13 +6,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
+import br.com.application.service.TagService;
 import br.com.domain.dto.response.TagResponseDTO;
-import br.com.domain.mapper.TagMapper;
-import br.com.domain.model.Tag;
-import br.com.domain.repository.TagRepository;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.core.MediaType;
@@ -24,14 +20,13 @@ import jakarta.ws.rs.core.Response;
 public class PortalTagResource {
 
     @Inject
-    TagRepository tagRepository;
+    TagService tagService;
 
     // Endpoints Públicos
     @GET
     public Response listarTags() {
-        List<TagResponseDTO> tags = tagRepository.listAll()
+        List<TagResponseDTO> tags = tagService.getAllTags()
                 .stream()
-                .map(TagMapper::toResponseDTO)
                 .collect(Collectors.toList());
         return Response.ok(tags).build();
     }
@@ -39,11 +34,13 @@ public class PortalTagResource {
     @GET
     @Path("/{tagId}")
     public Response getTagConteudo(@PathParam("tagId") Long tagId) {
-        Optional<Tag> tagOpt = tagRepository.findByIdOptional(tagId);
-        if (tagOpt.isEmpty()) {
+
+        TagResponseDTO tagResponseDTO = tagService.getTagById(tagId);
+
+        if (tagResponseDTO == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Tag não encontrada").build();
         }
 
-        return Response.ok(TagMapper.toResponseDTO(tagOpt.get())).build();
+        return Response.ok(tagResponseDTO).build();
     }
 }

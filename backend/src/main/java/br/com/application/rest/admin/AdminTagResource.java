@@ -1,5 +1,7 @@
 package br.com.application.rest.admin;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 import br.com.application.service.TagService;
 import br.com.domain.dto.request.TagRequestDTO;
@@ -8,6 +10,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -24,6 +27,14 @@ public class AdminTagResource {
 
     @Inject
     TagService tagService;
+
+    @GET
+    public Response listarTags() {
+        List<TagResponseDTO> tags = tagService.getAllTags()
+                .stream()
+                .collect(Collectors.toList());
+        return Response.ok(tags).build();
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

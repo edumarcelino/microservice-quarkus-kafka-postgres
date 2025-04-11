@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.kafka.common.errors.ResourceNotFoundException;
+//import org.apache.kafka.common.errors.ResourceNotFoundException;
 import br.com.common.exception.ExceptionLogger;
 import br.com.common.exception.tag.TagDuplicadaException;
 import br.com.common.exception.tag.TagNotFoundException;
@@ -83,7 +83,7 @@ public class TagService {
     @Transactional
     public TagResponseDTO updateTag(Long id, TagRequestDTO tagRequestDTO) {
         Tag existingTag = tagRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tag com ID " + id + " não encontrada"));
+                .orElseThrow(() -> new TagNotFoundException("Tag com ID " + id + " não encontrada"));
 
         existingTag.setNome(tagRequestDTO.getNome());
 

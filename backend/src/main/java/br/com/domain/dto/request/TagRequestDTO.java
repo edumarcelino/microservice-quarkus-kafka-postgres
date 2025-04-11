@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 public class TagRequestDTO {
 
     @NotBlank(message = "O nome da tag é obrigatório")
-    @Size(min = 3, max = 100, message = "O nome da tag deve ter entre 3 e 100 caracteres")
+    @Size(min = 2, max = 30, message = "O nome da tag deve ter entre 2 e 30 caracteres.")
     @Column(unique = true, nullable = false)
     public String nome;
 

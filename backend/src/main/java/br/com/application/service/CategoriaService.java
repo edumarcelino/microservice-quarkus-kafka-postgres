@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.kafka.common.errors.ResourceNotFoundException;
+//import org.apache.kafka.common.errors.ResourceNotFoundException;
 
 import br.com.common.exception.ExceptionLogger;
 import br.com.common.exception.categoria.CategoriaDuplicadaException;
@@ -84,7 +84,7 @@ public class CategoriaService {
     @Transactional
     public CategoriaResponseDTO updateCategoria(Long id, CategoriaRequestDTO categoriaRequestDTO) {
         Categoria existingCategoria = categoriaRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria com ID " + id + " não encontrada"));
+                .orElseThrow(() -> new CategoriaNotFoundException("Categoria com ID " + id + " não encontrada"));
 
         existingCategoria.setNome(categoriaRequestDTO.getNome());
 

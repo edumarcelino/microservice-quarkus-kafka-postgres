@@ -1,111 +1,152 @@
 {
-    "realm": "gpg",
-    "enabled": true,
-    "roles": {
-        "realm": [
-            {
-                "name": "admin",
-                "description": "Administrator role"
-            },
-            {
-                "name": "user",
-                "description": "User role"
-            },
-            {
-                "name": "review",
-                "description": "Reviewer role"
-            }
-        ]
-    },
-    "groups": [
-        {
-            "name": "Admins"
-        },
-        {
-            "name": "Users"
-        },
-        {
-            "name": "Reviewers"
-        }
-    ],
-    "users": [
-        {
-            "username": "admin_user",
-            "enabled": true,
-            "firstName": "Admin",
-            "lastName": "User",
-            "email": "admin@example.com",
-            "emailVerified": true,
-            "credentials": [
-                {
-                    "type": "password",
-                    "value": "adminuserpass",
-                    "temporary": false
-                }
-            ],
-            "realmRoles": [
-                "admin"
-            ],
-            "groups": [
-                "Admins"
-            ]
-        },
-        {
-            "username": "normal_user",
-            "enabled": true,
-            "credentials": [
-                {
-                    "type": "password",
-                    "value": "normaluserpass",
-                    "temporary": false
-                }
-            ],
-            "realmRoles": [
-                "user"
-            ],
-            "groups": [
-                "Users"
-            ]
-        },
-        {
-            "username": "review_user",
-            "enabled": true,
-            "credentials": [
-                {
-                    "type": "password",
-                    "value": "reviewuserpass",
-                    "temporary": false
-                }
-            ],
-            "realmRoles": [
-                "review"
-            ],
-            "groups": [
-                "Reviewers"
-            ]
-        }
-    ],
-    "clients": [
-        {
-            "clientId": "gpg_client",
-            "enabled": true,
-            "publicClient": false,
-            "secret": "secret",
-            "directAccessGrantsEnabled": true,
-            "serviceAccountsEnabled": true,
-            "standardFlowEnabled": true,
-            "rootUrl": "http://localhost:8081",
-            "redirectUris": [
-                "http://localhost:8081/*"
-            ],
-            "webOrigins": [
-                "+"
-            ],
-            "protocol": "openid-connect",
-            "attributes": {
-                "post.logout.redirect.uris": "+",
-                "oauth2.device.authorization.grant.enabled": "true"
-            }
-        }
+  "realm": "gpg",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator role"
+      },
+      {
+        "name": "user",
+        "description": "User role"
+      },
+      {
+        "name": "review",
+        "description": "Reviewer role"
+      },
+      {
+        "name": "realm-admin",
+        "description": "Role to manage the realm"
+      }
     ]
+  },
+  "groups": [
+    {
+      "name": "Admins"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Reviewers"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@example.com",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "realm-admin"
+      ],
+      "groups": [
+        "Admins"
+      ]
+    },
+    {
+      "username": "normal",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "normal",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ],
+      "groups": [
+        "Users"
+      ]
+    },
+    {
+      "username": "review",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "review",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "review"
+      ],
+      "groups": [
+        "Reviewers"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "gpg_client",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "secret",
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": true,
+      "rootUrl": "http://localhost:3001",
+      "redirectUris": [
+        "http://localhost:3001/*",
+        "http://localhost:8081/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3001",
+        "http://localhost:8081"
+      ],
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "1800",
+        "client.session.idle.timeout": "1800",
+        "client.session.max.lifespan": "3600",
+        "refresh.token.max.reuse": "0",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "true"
+      }
+    },
+    {
+      "clientId": "gpg_admin",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "supersecret",
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "standardFlowEnabled": false,
+      "bearerOnly": false,
+      "attributes": {
+        "client_credentials.use_refresh_token": "true"
+      },
+      "authorizationServicesEnabled": false,
+      "redirectUris": [],
+      "webOrigins": [],
+      "defaultRoles": [
+        "view-users"
+      ],
+      "protocolMappers": []
+    }
+  ],
+  "scopeMappings": [
+    {
+      "client": "gpg_admin",
+      "roles": [
+        "realm-admin"
+      ],
+      "clientScope": "realm-management"
+    }
+  ]
 }
