@@ -24,6 +24,8 @@ public class TokenUtils {
 	@Inject
 	JWTParser jwtParser;
 
+
+
 	public static String generateToken(String username, Role role, Duration duration, String issuer) throws Exception {
 		String privateKeyLocation = "/privateKey.pem";
 

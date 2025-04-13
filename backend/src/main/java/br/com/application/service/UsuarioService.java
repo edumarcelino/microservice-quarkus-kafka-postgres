@@ -1,21 +1,32 @@
 package br.com.application.service;
 
+import br.com.common.util.TokenUtils;
 import br.com.domain.dto.request.UsuarioRequestDTO;
 import br.com.domain.dto.response.UsuarioResponseDTO;
 import br.com.domain.mapper.UsuarioMapper;
 import br.com.domain.model.Usuario;
+import br.com.domain.repository.UsuarioRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UsuarioService {
 
+    @Inject
+    UsuarioRepository usuarioRepository;
+
+    @Inject
+    TokenUtils tokenUtils;
+
     public List<UsuarioResponseDTO> listarTodos() {
+
         return Usuario.listAll(Sort.by("nome"))
                 .stream()
                 .map(u -> UsuarioMapper.toResponseDTO((Usuario) u))
@@ -71,5 +82,22 @@ public class UsuarioService {
             throw new RuntimeException("Email ou senha inválidos.");
         }
         return UsuarioMapper.toResponseDTO(usuario);
+    }
+
+    // Método para buscar usuário baseado no token
+    public Usuario buscarUsuarioPeloToken(String token) throws Exception {
+        // Extrai o nome do usuário (ou sub) do token JWT
+        String username = tokenUtils.getUsernameFromToken(token);
+
+        // Busca o usuário no banco de dados
+        return usuarioRepository.find("username", username).firstResult();
+    }
+
+    // Método para validar se o usuário possui uma role específica
+    public boolean usuarioTemRole(String token, String role) throws Exception {
+        // Obtém as roles do token
+        Set<String> roles = tokenUtils.getRolesFromToken(token);
+        // Verifica se o usuário tem a role específica
+        return roles.contains(role);
     }
 }

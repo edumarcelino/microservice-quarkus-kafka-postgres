@@ -16,30 +16,44 @@ public class Postagem extends PanacheEntity {
     @NotBlank(message = "O título da postagem é obrigatório.")
     @Size(min = 5, max = 100, message = "O título deve ter entre 5 e 100 caracteres.")
     @Column(nullable = false, length = 100)
-    public String titulo;
+    private String titulo;
 
     @NotBlank(message = "O conteúdo da postagem é obrigatório.")
     @Lob
     @Column(nullable = false)
-    public String conteudo;
+    private String conteudo;
 
     @Column(nullable = false)
-    public LocalDateTime dataPublicacao = LocalDateTime.now();
+    private LocalDateTime dataPublicacao = LocalDateTime.now();
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "categoria_id", nullable = false)
-    public Categoria categoria;
+    private Categoria categoria;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)
-    public Usuario autor;
+    private Usuario autor;
 
     @ManyToMany
-    @JoinTable(name = "postagem_tag", joinColumns = @JoinColumn(name = "postagem_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    public List<Tag> tags = new ArrayList<>();
+    @JoinTable(
+        name = "postagem_tag",
+        joinColumns = @JoinColumn(name = "postagem_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "postagem", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Comentario> comentarios;
+    private List<Comentario> comentarios;
+
+    // Imagem principal da postagem (topo)
+    @ManyToOne
+    @JoinColumn(name = "imagem_principal_id")
+    private Imagem imagemPrincipal;
+
+    // Miniatura para exibição em listagens
+    @ManyToOne
+    @JoinColumn(name = "imagem_miniatura_id")
+    private Imagem imagemMiniatura;
 
     public Postagem() {
     }
@@ -50,6 +64,8 @@ public class Postagem extends PanacheEntity {
         this.categoria = categoria;
         this.autor = autor;
     }
+
+    // Getters e setters
 
     public String getTitulo() {
         return titulo;
@@ -91,12 +107,36 @@ public class Postagem extends PanacheEntity {
         this.autor = autor;
     }
 
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
     public List<Comentario> getComentarios() {
         return comentarios;
     }
 
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public Imagem getImagemPrincipal() {
+        return imagemPrincipal;
+    }
+
+    public void setImagemPrincipal(Imagem imagemPrincipal) {
+        this.imagemPrincipal = imagemPrincipal;
+    }
+
+    public Imagem getImagemMiniatura() {
+        return imagemMiniatura;
+    }
+
+    public void setImagemMiniatura(Imagem imagemMiniatura) {
+        this.imagemMiniatura = imagemMiniatura;
     }
 
     @Override
@@ -113,13 +153,4 @@ public class Postagem extends PanacheEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
-
 }

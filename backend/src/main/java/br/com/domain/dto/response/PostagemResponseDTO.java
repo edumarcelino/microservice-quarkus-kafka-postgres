@@ -3,24 +3,26 @@ package br.com.domain.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-
 public class PostagemResponseDTO {
 
     private Long id;
     private String titulo;
     private String conteudo;
     private LocalDateTime dataPublicacao;
+
     private CategoriaResponseDTO categoria;
     private List<TagResponseDTO> tags;
     private UsuarioResponseDTO autor;
 
-    // Construtores
+    private ImagemResponseDTO imagemPrincipal;
+    private ImagemResponseDTO imagemMiniatura;
+
     public PostagemResponseDTO() {
     }
 
     public PostagemResponseDTO(Long id, String titulo, String conteudo, LocalDateTime dataPublicacao,
-                               CategoriaResponseDTO categoria, List<TagResponseDTO> tags, UsuarioResponseDTO autor) {
+            CategoriaResponseDTO categoria, List<TagResponseDTO> tags, UsuarioResponseDTO autor,
+            ImagemResponseDTO imagemPrincipal, ImagemResponseDTO imagemMiniatura) {
         this.id = id;
         this.titulo = titulo;
         this.conteudo = conteudo;
@@ -28,9 +30,10 @@ public class PostagemResponseDTO {
         this.categoria = categoria;
         this.tags = tags;
         this.autor = autor;
+        this.imagemPrincipal = imagemPrincipal;
+        this.imagemMiniatura = imagemMiniatura;
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -87,6 +90,20 @@ public class PostagemResponseDTO {
         this.autor = autor;
     }
 
-    
+    public ImagemResponseDTO getImagemPrincipal() {
+        return imagemPrincipal;
+    }
+
+    public void setImagemPrincipal(ImagemResponseDTO imagemPrincipal) {
+        this.imagemPrincipal = imagemPrincipal;
+    }
+
+    public ImagemResponseDTO getImagemMiniatura() {
+        return imagemMiniatura;
+    }
+
+    public void setImagemMiniatura(ImagemResponseDTO imagemMiniatura) {
+        this.imagemMiniatura = imagemMiniatura;
+    }
 
 }

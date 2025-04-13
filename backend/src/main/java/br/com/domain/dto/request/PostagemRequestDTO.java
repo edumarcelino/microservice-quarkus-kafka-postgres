@@ -1,5 +1,7 @@
 package br.com.domain.dto.request;
 
+import org.jboss.resteasy.reactive.RestForm;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -7,30 +9,44 @@ public class PostagemRequestDTO {
 
     @NotBlank(message = "O título da postagem é obrigatório.")
     @Size(min = 5, max = 100, message = "O título deve ter entre 5 e 100 caracteres.")
+    @RestForm
     private String titulo;
 
     @NotBlank(message = "O conteúdo da postagem é obrigatório.")
+    @RestForm
     private String conteudo;
 
+    @RestForm
     private Long categoriaId;
 
-    private Long autorId; // ID do autor da postagem
+    @RestForm
+    private Long autorId;
 
-    private Long[] tagsId; // IDs das tags associadas à postagem
+    @RestForm
+    private Long[] tagsId;
 
-    // Construtores
+    @RestForm
+    private Long imagemPrincipalId; // ID da imagem de topo
+
+    @RestForm
+    private Long imagemMiniaturaId; // ID da miniatura
+
     public PostagemRequestDTO() {
     }
 
-    public PostagemRequestDTO(String titulo, String conteudo, Long categoriaId, Long[] tagsId, Long autorId) {
+    public PostagemRequestDTO(
+            @NotBlank(message = "O título da postagem é obrigatório.") @Size(min = 5, max = 100, message = "O título deve ter entre 5 e 100 caracteres.") String titulo,
+            @NotBlank(message = "O conteúdo da postagem é obrigatório.") String conteudo, Long categoriaId,
+            Long autorId, Long[] tagsId, Long imagemPrincipalId, Long imagemMiniaturaId) {
         this.titulo = titulo;
         this.conteudo = conteudo;
         this.categoriaId = categoriaId;
-        this.tagsId = tagsId;
         this.autorId = autorId;
+        this.tagsId = tagsId;
+        this.imagemPrincipalId = imagemPrincipalId;
+        this.imagemMiniaturaId = imagemMiniaturaId;
     }
 
-    // Getters e Setters
     public String getTitulo() {
         return titulo;
     }
@@ -55,14 +71,6 @@ public class PostagemRequestDTO {
         this.categoriaId = categoriaId;
     }
 
-    public Long[] getTagsId() {
-        return tagsId;
-    }
-
-    public void setTagsId(Long[] tagsId) {
-        this.tagsId = tagsId;
-    }
-
     public Long getAutorId() {
         return autorId;
     }
@@ -71,5 +79,30 @@ public class PostagemRequestDTO {
         this.autorId = autorId;
     }
 
-    
+    public Long[] getTagsId() {
+        return tagsId;
+    }
+
+    public void setTagsId(Long[] tagsId) {
+        this.tagsId = tagsId;
+    }
+
+    public Long getImagemPrincipalId() {
+        return imagemPrincipalId;
+    }
+
+    public void setImagemPrincipalId(Long imagemPrincipalId) {
+        this.imagemPrincipalId = imagemPrincipalId;
+    }
+
+    public Long getImagemMiniaturaId() {
+        return imagemMiniaturaId;
+    }
+
+    public void setImagemMiniaturaId(Long imagemMiniaturaId) {
+        this.imagemMiniaturaId = imagemMiniaturaId;
+    }
+
+    // Getters, Setters, Construtores...
+
 }
